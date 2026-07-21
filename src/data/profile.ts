@@ -38,7 +38,7 @@ export const profile = {
     degree: 'Cử nhân Công nghệ Thông tin',
     year: '2017',
   },
-  avatar: `${import.meta.env.BASE_URL}avatar.svg`,
+  avatar: `${import.meta.env.BASE_URL}avatar.jpeg`,
   nav: [
     { id: 'about', label: 'Giới thiệu' },
     { id: 'skills', label: 'Kỹ năng' },
@@ -164,7 +164,7 @@ export const profile = {
   ] satisfies ProjectGroup[],
   contact: {
     email: 'huu.tho.ns@gmail.com',
-    phone: '09839384581',
+    phone: '0989****81',
     address: 'An Khánh, Hà Nội',
     github: 'https://github.com/EnettyTech',
     birthday: '24/03/1995',

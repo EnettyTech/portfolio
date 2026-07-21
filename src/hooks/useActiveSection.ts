@@ -1,36 +1,49 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 
-export function useActiveSection(ids: string[]) {
-  const [activeId, setActiveId] = useState(ids[0] ?? '')
+export function useActiveSection(
+  ids: string[],
+  scrollRootRef?: RefObject<HTMLElement | null> | null,
+) {
+  const [activeId, setActiveId] = useState(ids[0] ?? 'top')
 
   useEffect(() => {
     if (ids.length === 0) return
 
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el))
+    const root = scrollRootRef?.current ?? null
 
-    if (elements.length === 0) return
+    const observe = () => {
+      const elements = ids
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => Boolean(el))
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+      if (elements.length === 0) return
 
-        if (visible[0]?.target.id) {
-          setActiveId(visible[0].target.id)
-        }
-      },
-      {
-        rootMargin: '-35% 0px -45% 0px',
-        threshold: [0.1, 0.25, 0.5],
-      },
-    )
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
 
-    elements.forEach((el) => observer.observe(el))
+          if (visible[0]?.target.id) {
+            setActiveId(visible[0].target.id)
+          }
+        },
+        {
+          root,
+          rootMargin: '-12% 0px -12% 0px',
+          threshold: [0.25, 0.5, 0.75],
+        },
+      )
+
+      elements.forEach((el) => observer.observe(el))
+      return observer
+    }
+
+    const observer = observe()
+    if (!observer) return
+
     return () => observer.disconnect()
-  }, [ids])
+  }, [ids, scrollRootRef])
 
   return activeId
 }

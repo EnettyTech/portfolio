@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import type { ReactNode } from 'react'
+import { slideItemVariants } from './SlideContent'
 
 type SectionRevealProps = {
   children: ReactNode
@@ -14,13 +15,25 @@ export function SectionReveal({
 }: SectionRevealProps) {
   const reduceMotion = useReducedMotion()
 
+  if (reduceMotion) {
+    return <div className={className}>{children}</div>
+  }
+
   return (
     <motion.div
       className={className}
-      initial={reduceMotion ? false : { opacity: 0, y: 28 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
+      variants={{
+        hidden: slideItemVariants.hidden,
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1],
+            delay,
+          },
+        },
+      }}
     >
       {children}
     </motion.div>
